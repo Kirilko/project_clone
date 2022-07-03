@@ -7,6 +7,7 @@
 
       <v-btn
         text
+        v-if="$store.state.user"
         @click="$router.push({ name: 'TeoryCreate' })"
       >
         Создать
@@ -18,9 +19,9 @@
         :key="teory_info.id"
       >
         <template>
-          <v-card class="mx-auto" max-width="344">
+          <v-card class="mx-auto" max-width="346">
             <v-card-text>
-              <div>Теоритический материал</div>
+              <div>Теоретический материал</div>
               <p class="text-h4 text--primary">{{ teory_info.name }}</p>
               <p>
                 Время чтения: ~{{
@@ -43,7 +44,7 @@
                 Читать
               </v-btn>
               <v-btn
-                v-if="true"
+                v-if="$store.state.user"
                 text
                 color="blue accent-4"
                 @click="
@@ -56,9 +57,9 @@
                 Редактировать
               </v-btn>
               <v-btn
+                v-if="$store.state.user"
                 text
                 color="red accent-4"
-                v-if="true"
               >
                 Удалить
               </v-btn>

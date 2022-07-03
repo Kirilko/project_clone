@@ -1,14 +1,14 @@
 <template>
   <div>
-    <h2>Результаты прохождения заданий</h2>
+    <h2>Результаты прохождения тестов</h2>
     <v-expansion-panels>
-      <v-expansion-panel>
-        <v-expansion-panel-header> Задание 1 </v-expansion-panel-header>
+      <v-expansion-panel v-for="(test, i) in this.tests" :key="i">
+        <v-expansion-panel-header> {{test.test.name}} </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-data-table
             disable-sort
             class="elevation-1"
-            :items="data"
+            :items="test.test.data"
             :headers="headers"
             hide-default-footer
           >
@@ -16,17 +16,19 @@
               <v-row>
                 <v-col>
                   <v-toolbar-title class="ml-5 mt-3"
-                    >Результаты прохождения задания 1</v-toolbar-title
+                    >Результаты прохождения теста «Вводное тестирование»</v-toolbar-title
                   >
                 </v-col>
               </v-row>
             </template>
           </v-data-table>
-          <v-row class="mt-3"><v-col>Кол-во залетов в беспилотные зоны: <b>1</b></v-col></v-row>
+          <v-row>
+            <v-col>Время прохождения: {{ test.dttm_end - test.dttm_start }}.</v-col>
+          </v-row>
           <v-row
-            ><v-col>Итоговая формула:</v-col
-            ><v-col> 69 - (69 * 0.5 * 1) = </v-col
-            ><v-col><h4>34,5</h4></v-col></v-row
+            ><v-col>Итого:</v-col
+            ><v-col></v-col
+            ><v-col><h4>{{(test.test.cnt/test.test.data.length)*100}}%</h4></v-col></v-row
           >
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -35,129 +37,39 @@
 </template>
 
 <script>
+import http from "../http";
+
 export default {
+  async beforeMount() {
+    this.tests = (await http.getList("TestAttempt")).data;
+    for(let i = 0; i < Object.keys(this.tests).length; i++){
+      this.tests[i].test = (await http.getItem("Test", this.tests[i].test, true)).data;
+      let ans = Array.from(this.tests[i].answers);
+      this.tests[i].test['cnt'] = 0;
+      for (let j = 0; j<ans.length;j++){
+        this.tests[i].test.data[j]['res'] = ans[j];
+        if(ans[j] === '+') {
+          this.tests[i].test['cnt'] += 1
+        }
+      }
+
+    }
+  console.log(this.tests)
+
+  },
   data() {
     return {
+      tests: {
+        data: [],
+      },
       headers: [
         {
-          text: "№ теста",
-          value: "num",
+          text: "№ вопроса",
+          value: "id",
         },
         {
-          text: "max баллов",
-          value: "max",
-        },
-        {
-          text: "Коэффициент радиуса",
-          value: "radius_coeff",
-        },
-        {
-          text: "Коэффициент времени",
-          value: "coeff_time",
-        },
-        {
-          text: "Доп.коэффициенты",
-          value: "add_coeff",
-        },
-        {
-          text: "Итоговая формула",
-          value: "formula",
-        },
-        {
-          text: "Баллы",
-          value: "points",
-        },
-      ],
-      data: [
-        {
-          num: 1,
-          max: 10,
-          radius_coeff: "1 (Залетел в зону)",
-          coeff_time: "1 (вовремя)",
-          add_coeff: "-",
-          formula: "10 * 1 * 1",
-          points: 10,
-        },
-        {
-          num: 2,
-          max: 10,
-          radius_coeff: "1 (Залетел в зону)",
-          coeff_time: "0.5 (опаздал на 20 сек)",
-          add_coeff: "-",
-          formula: "10 * 1 * 0.5",
-          points: 5,
-        },
-        {
-          num: 3,
-          max: 10,
-          radius_coeff: "1 (Залетел в зону)",
-          coeff_time: "1 (вовремя)",
-          add_coeff: "1(Нажатие на кнопку)",
-          formula: "10 * 1 * 1",
-          points: 10,
-        },
-        {
-          num: 4,
-          max: 10,
-          radius_coeff: "0.5 (Пролетел на 3 метра дальше зоны)",
-          coeff_time: "1 (вовремя)",
-          add_coeff: "-",
-          formula: "10 * 0.5 * 1",
-          points: 5,
-        },
-        {
-          num: 5,
-          max: 10,
-          radius_coeff: "1 (Залетел в зону)",
-          coeff_time: "1 (вовремя)",
-          add_coeff: "-",
-          formula: "10 * 1 * 1",
-          points: 10,
-        },
-        {
-          num: 5,
-          max: 10,
-          radius_coeff: "1 (Залетел в зону)",
-          coeff_time: "1 (вовремя)",
-          add_coeff: "-",
-          formula: "10 * 1 * 1",
-          points: 10,
-        },
-        {
-          num: 6,
-          max: 10,
-          radius_coeff: "1 (Залетел в зону)",
-          coeff_time: "1 (вовремя)",
-          add_coeff: "-",
-          formula: "10 * 1 * 1",
-          points: 10,
-        },
-        {
-          num: 7,
-          max: 10,
-          radius_coeff: "0.1 (Пролетел на 9 метров дальше зоны))",
-          coeff_time: "1 (вовремя)",
-          add_coeff: "1 (Нажатие на кнопку)",
-          formula: "10 * 0.1 * 1",
-          points: 1,
-        },
-        {
-          num: 8,
-          max: 10,
-          radius_coeff: "1 (Залетел в зону)",
-          coeff_time: "0.8 (опаздал на 10 сек)",
-          add_coeff: "-",
-          formula: "10 * 1 * 0.8",
-          points: 8,
-        },
-        {
-          num: 9,
-          max: 10,
-          radius_coeff: "1 (Залетел в зону)",
-          coeff_time: "1 (вовремя)",
-          add_coeff: "-",
-          formula: "10 * 1 * 1",
-          points: 10,
+          text: "Результат",
+          value: "res",
         },
       ],
     };

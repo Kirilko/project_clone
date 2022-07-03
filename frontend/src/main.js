@@ -31,12 +31,12 @@ router.beforeEach((to, from, next) => {
   }
 })
 Vue.config.productionTip = false
-store.dispatch('checkAuth').then(() => {
+
   new Vue({
     router,
     store: store,
     vuetify,
     render: h => h(App)
   }).$mount('#app')
-})
+
 Axios.defaults.headers.common['Content-Type'] = 'application/json';

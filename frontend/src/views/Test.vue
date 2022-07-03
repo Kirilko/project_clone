@@ -7,6 +7,7 @@
 
       <v-btn
         text
+        v-if="$store.state.user"
         @click="$router.push({ name: 'TestCreate' })"
       >
         Создать
@@ -18,7 +19,7 @@
         :key="test.id"
       >
         <template>
-          <v-card class="mx-auto" max-width="344">
+          <v-card class="mx-auto" max-width="347">
             <v-card-text>
               <div>Тест</div>
               <p class="text-h4 text--primary">{{ test.name }}</p>
@@ -37,7 +38,7 @@
                 Пройти
               </v-btn>
               <v-btn
-                v-if="true"
+                v-if="$store.state.user"
                 text
                 color="blue accent-4"
                 @click="
@@ -50,9 +51,10 @@
                 Редактировать
               </v-btn>
               <v-btn
+                v-if="$store.state.user"
                 text
                 color="red accent-4"
-                v-if="true"
+                @click="deleteItem(test);"
               >
                 Удалить
               </v-btn>
@@ -71,6 +73,18 @@ export default {
     if (this.$store.state.tests.length == 0) {
       await this.$store.dispatch("setTests");
     }
+  },
+  methods: {
+    async deleteItem(data) {
+        await this.$store.dispatch("deleteItem", {
+          data: data,
+          mutation: "setTests",
+          url: "Test",
+          items_name: "tests",
+          id: data.id,
+        });
+        await this.$store.dispatch("setTests");
+    },
   },
 };
 </script>

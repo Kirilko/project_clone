@@ -12,14 +12,14 @@
                 v-for="(answer, j) in question.answers"
                 :key="`${(j + i) * j}-answer`"
                 :label="answer.title"
-                :value="answer.title"
+                :value="j"
               ></v-radio>
             </v-radio-group>
           </v-col>
         </v-row>
       </v-col>
     </v-row>
-    <v-btn :disabled='!isAllFiiled' color="primary" @click="$router.replace({name: 'Test'})">Завершить тестирование</v-btn>
+    <v-btn :disabled='!isAllFiiled' color="primary" @click="endTest()">Завершить тестирование</v-btn>
   </v-container>
 </template>
 
@@ -43,6 +43,28 @@ export default {
       return this.test.data.length == Object.values(this.answers).length;
     },
   },
+  methods: {
+    async endTest(){
+      let answers = '';
+      console.log(this.test)
+      for (let i = 0; i < Object.keys(this.answers).length; i++){
+        console.log(this.test.data[i].answers[this.answers[i]])
+        if(this.test.data[i].answers[this.answers[i]]){
+          answers += this.test.data[i].answers[this.answers[i]].correct ? '+' : '-';
+        } else answers += '-';
+
+      }
+      await this.$store.dispatch("addItem", {
+          data: {
+            test: this.test.id,
+            dttm_end: new Date(),
+            answers: answers},
+          url: "TestAttempt",
+          items_name: "tests",
+        });
+      this.$router.replace({name: 'Test'});
+    }
+  }
 };
 </script>
 
