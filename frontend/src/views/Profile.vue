@@ -23,10 +23,10 @@
             </template>
           </v-data-table>
           <v-row>
-            <v-col>Время прохождения: {{ test.dttm_end - test.dttm_start }}.</v-col>
+            <v-col>Время прохождения: {{ test.dttm_end }}.</v-col>
           </v-row>
           <v-row
-            ><v-col>Итого:</v-col
+            ><v-col><b>Итого:</b></v-col
             ><v-col></v-col
             ><v-col><h4>{{(test.test.cnt/test.test.data.length)*100}}%</h4></v-col></v-row
           >
@@ -47,7 +47,9 @@ export default {
       let ans = Array.from(this.tests[i].answers);
       this.tests[i].test['cnt'] = 0;
       for (let j = 0; j<ans.length;j++){
-        this.tests[i].test.data[j]['res'] = ans[j];
+        try {
+          this.tests[i].test.data[j]['res'] = ans[j];
+        }catch{continue}
         if(ans[j] === '+') {
           this.tests[i].test['cnt'] += 1
         }

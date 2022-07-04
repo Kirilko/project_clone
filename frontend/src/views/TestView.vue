@@ -45,23 +45,21 @@ export default {
   },
   methods: {
     async endTest(){
+      console.log(Date())
       let answers = '';
-      console.log(this.test)
       for (let i = 0; i < Object.keys(this.answers).length; i++){
-        console.log(this.test.data[i].answers[this.answers[i]])
         if(this.test.data[i].answers[this.answers[i]]){
           answers += this.test.data[i].answers[this.answers[i]].correct ? '+' : '-';
         } else answers += '-';
 
       }
-      await this.$store.dispatch("addItem", {
+      this.$store.dispatch("addItem", {
           data: {
             test: this.test.id,
             dttm_end: new Date(),
             answers: answers},
           url: "TestAttempt",
-          items_name: "tests",
-        });
+        })
       this.$router.replace({name: 'Test'});
     }
   }
