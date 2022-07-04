@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-toolbar elevation="0">
-      <v-toolbar-title>Теоритические материалы</v-toolbar-title>
+      <v-toolbar-title>Теоретические материалы</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
@@ -60,6 +60,7 @@
                 v-if="$store.state.user"
                 text
                 color="red accent-4"
+                @click="deleteItem(teory_info)"
               >
                 Удалить
               </v-btn>
@@ -78,6 +79,18 @@ export default {
     if (this.$store.state.teory_infos.length == 0) {
       await this.$store.dispatch("setTeoryInfos");
     }
+  },
+   methods: {
+    async deleteItem(data) {
+        await this.$store.dispatch("deleteItem", {
+          data: data,
+          mutation: "setTeoryInfos",
+          url: "TeoryInfo",
+          items_name: "teory_infos",
+          id: data.id,
+        });
+        await this.$store.dispatch("setTeoryInfos");
+    },
   },
 };
 </script>
